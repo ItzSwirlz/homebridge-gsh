@@ -6,10 +6,8 @@ export class Television {
     return {
       id: service.uniqueId,
       type:
-        service.accessoryInformation.Manufacturer === 'Nintendo' ||
-        service.accessoryInformation.Manufacturer === 'Microsoft' ||
-        service.accessoryInformation.Manufacturer === 'Sony' // I don't think these manufacturers sell televisions, if they do then they'll need another check
-          ? 'action.devices.types.GameConsole'
+        service.accessoryInformation.Manufacturer === 'Nintendo' // for homebridge-wiiu. TODO: xbox devices/playstation
+          ? 'action.devices.types.GAME_CONSOLE'
           : 'action.devices.types.TV',
       traits: ['action.devices.traits.OnOff'],
       name: {
