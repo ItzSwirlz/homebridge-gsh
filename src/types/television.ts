@@ -5,15 +5,15 @@ export class Television {
   sync(service: HapService) {
     return {
       id: service.uniqueId,
-      type: 'action.devices.types.TV',
-      traits: [
-        'action.devices.traits.OnOff',
-      ],
+      type:
+        service.accessoryInformation.Manufacturer === 'Nintendo' ||
+        service.accessoryInformation.Manufacturer === 'Microsoft' ||
+        service.accessoryInformation.Manufacturer === 'Sony' // I don't think these manufacturers sell televisions, if they do then they'll need another check
+          ? 'action.devices.types.GameConsole'
+          : 'action.devices.types.TV',
+      traits: ['action.devices.traits.OnOff'],
       name: {
-        defaultNames: [
-          service.serviceName,
-          service.accessoryInformation.Name,
-        ],
+        defaultNames: [service.serviceName, service.accessoryInformation.Name],
         name: service.serviceName,
         nicknames: [],
       },
@@ -34,7 +34,10 @@ export class Television {
 
   query(service: HapService) {
     return {
-      on: service.characteristics.find(x => x.type === Characteristic.Active).value ? true : false,
+      on: service.characteristics.find((x) => x.type === Characteristic.Active)
+        .value
+        ? true
+        : false,
       online: true,
     };
   }
@@ -45,17 +48,20 @@ export class Television {
     }
 
     switch (command.execution[0].command) {
-      case ('action.devices.commands.OnOff'): {
+      case 'action.devices.commands.OnOff': {
         const payload = {
-          characteristics: [{
-            aid: service.aid,
-            iid: service.characteristics.find(x => x.type === Characteristic.Active).iid,
-            value: command.execution[0].params.on ? 1 : 0,
-          }],
+          characteristics: [
+            {
+              aid: service.aid,
+              iid: service.characteristics.find(
+                (x) => x.type === Characteristic.Active,
+              ).iid,
+              value: command.execution[0].params.on ? 1 : 0,
+            },
+          ],
         };
         return { payload };
       }
     }
   }
-
 }
