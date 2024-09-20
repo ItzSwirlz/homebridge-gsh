@@ -65,15 +65,21 @@ export class Television {
   }
 
   query(service: HapService) {
+    const currentInputValue = service.characteristics.find(
+      (x) => x.type === Characteristic.ActiveIdentifier,
+    ).value;
+    const currInput = service.accessory.services.find(
+      (x) =>
+        x.characteristics.find((g) => g.type === Characteristic.Identifier)
+          .value === currentInputValue,
+    );
     return {
       on: service.characteristics.find((x) => x.type === Characteristic.Active)
         .value
         ? true
         : false,
       online: true,
-      currentInput: service.characteristics.find(
-        (x) => x.type === Characteristic.ActiveIdentifier,
-      ).value,
+      currentInput: currInput,
     };
   }
 
