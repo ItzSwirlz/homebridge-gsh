@@ -64,6 +64,7 @@ export interface HapService {
   primary: boolean;
   hidden: boolean;
   serialNumber: string;
+  accessory: HapAccessory;
 
   // custom
   uniqueId?: string;
@@ -72,7 +73,6 @@ export interface HapService {
   aid?: number;
   serviceType?: string;
   instance?: Instance;
-  linkedServices?: HapService[];
 }
 
 export interface HapAccessory {

@@ -371,9 +371,7 @@ export class Hap {
         for (const characteristic of service.characteristics) {
           characteristic.type = toLongFormUUID(characteristic.type);
         }
-        service.linkedServices.forEach((linkedService) => {
-          this.log.debug(linkedService);
-        });
+        service.accessory = accessory;
       }
 
       // get accessory information service
