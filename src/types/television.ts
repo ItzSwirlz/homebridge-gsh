@@ -22,7 +22,10 @@ export class Television {
         service.accessoryInformation.Manufacturer === "Nintendo" // for homebridge-wiiu. TODO: xbox devices/playstation
           ? "action.devices.types.GAME_CONSOLE"
           : "action.devices.types.TV",
-      traits: ["action.devices.traits.OnOff"],
+      traits: [
+        "action.devices.traits.OnOff",
+        "action.devices.traits.InputSelector",
+      ],
       name: {
         defaultNames: [service.serviceName, service.accessoryInformation.Name],
         name: service.serviceName,
@@ -45,17 +48,18 @@ export class Television {
       },
     };
     map.forEach((k, v) => {
-      response.attributes.availableInputs.concat([
-        {
-          key: k,
-          names: [
-            {
-              lang: "en",
-              name_synonym: [v],
-            },
-          ],
-        },
-      ]);
+      response.attributes.availableInputs =
+        response.attributes.availableInputs.concat([
+          {
+            key: k,
+            names: [
+              {
+                lang: "en",
+                name_synonym: [v],
+              },
+            ],
+          },
+        ]);
     });
     return response;
   }
