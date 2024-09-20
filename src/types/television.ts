@@ -1,15 +1,19 @@
-import { Characteristic } from "../hap-types";
+import { Characteristic, Service } from "../hap-types";
 import { HapService, AccessoryTypeExecuteResponse } from "../interfaces";
 
 export class Television {
   sync(service: HapService) {
     let map = new Map<string, string>();
-    service.characteristics.forEach((c) => {
-      if (c.type === Characteristic.InputSourceType) {
-        map.set(c.iid.toString(), c.description);
-        console.log(c.iid);
-        console.log(c.description);
-        console.log(c.value);
+    service.accessory.services.forEach((inputservice) => {
+      if (inputservice.type === Service.InputSource) {
+        map.set(
+          inputservice.characteristics.find(
+            (x) => x.type === Characteristic.ConfiguredName,
+          ).value,
+          inputservice.characteristics.find(
+            (x) => x.type === Characteristic.Identifier,
+          ).value,
+        );
       }
     });
     const response = {
@@ -26,13 +30,7 @@ export class Television {
       },
       willReportState: true,
       attributes: {
-        availableInputs: [
-          {
-            // each of the variables need a respective:
-            key: "key",
-            name: "name",
-          },
-        ],
+        availableInputs: [],
       },
       deviceInfo: {
         manufacturer: service.accessoryInformation.Manufacturer,
@@ -46,6 +44,19 @@ export class Television {
         instancePort: service.instance.port,
       },
     };
+    map.forEach((k, v) => {
+      response.attributes.availableInputs.concat([
+        {
+          key: k,
+          names: [
+            {
+              lang: "en",
+              name_synonym: [v],
+            },
+          ],
+        },
+      ]);
+    });
     return response;
   }
 
