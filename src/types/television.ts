@@ -71,6 +71,9 @@ export class Television {
         ? true
         : false,
       online: true,
+      currentInput: service.characteristics.find(
+        (x) => x.type === Characteristic.ActiveIdentifier,
+      ).value,
     };
   }
 
