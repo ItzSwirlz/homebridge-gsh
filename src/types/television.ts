@@ -101,6 +101,20 @@ export class Television {
         };
         return { payload };
       }
+      case "action.devices.commands.SetInput": {
+        const payload = {
+          characteristics: [
+            {
+              aid: service.aid,
+              iid: service.characteristics.find(
+                (x) => x.type === Characteristic.ActiveIdentifier,
+              ).iid,
+              value: command.execution[0].params.newInput,
+            },
+          ],
+        };
+        return { payload };
+      }
     }
   }
 }
