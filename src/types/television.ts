@@ -2,16 +2,18 @@ import { Characteristic, Service } from "../hap-types";
 import { HapService, AccessoryTypeExecuteResponse } from "../interfaces";
 
 export class Television {
+  private map: Map<string, string>;
+
   sync(service: HapService) {
-    let map = new Map<string, string>();
+    this.map = new Map<string, string>();
     service.accessory.services.forEach((inputservice) => {
       if (inputservice.type === Service.InputSource) {
-        map.set(
-          inputservice.characteristics.find(
-            (x) => x.type === Characteristic.ConfiguredName,
-          ).value,
+        this.map.set(
           inputservice.characteristics.find(
             (x) => x.type === Characteristic.Identifier,
+          ).value,
+          inputservice.characteristics.find(
+            (x) => x.type === Characteristic.ConfiguredName,
           ).value,
         );
       }
@@ -47,7 +49,7 @@ export class Television {
         instancePort: service.instance.port,
       },
     };
-    map.forEach((k, v) => {
+    this.map.forEach((k, v) => {
       response.attributes.availableInputs =
         response.attributes.availableInputs.concat([
           {
@@ -68,11 +70,7 @@ export class Television {
     const currentInputValue = service.characteristics.find(
       (x) => x.type === Characteristic.ActiveIdentifier,
     ).value;
-    const currInput = service.accessory.services.find(
-      (x) =>
-        x.characteristics.find((g) => g.type === Characteristic.Identifier)
-          .value === currentInputValue,
-    );
+    const currInput = this.map.get(currentInputValue);
     return {
       on: service.characteristics.find((x) => x.type === Characteristic.Active)
         .value
